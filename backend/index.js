@@ -11,13 +11,23 @@ const { HoldingsModel } = require("./model/HoldingsModel");
 const { PositionsModel } = require("./model/PositionsModel");
 const { OrdersModel } = require("./model/OrdersModel");
 
+const authRoutes = require("./routes/authRoutes");
+const authMiddleware = require("./middleware/authMiddleware");
+
 const PORT = process.env.PORT || 3002;
 const uri = process.env.MONGO_URL;
 
+
 const app = express();
+
 
 app.use(cors());
 app.use(bodyParser.json());
+
+
+app.use("/auth", authRoutes);
+
+
 
 // app.get("/addHoldings", async (req, res) => {
 //   let tempHoldings = [
@@ -198,18 +208,23 @@ app.get("/allPositions", async (req, res) => {
   res.json(allPositions);
 });
 
-app.post("/newOrder", async (req, res) => {
+
+// protected order route
+
+app.post("/newOrder", authMiddleware, async (req, res) => {
+  // only logged-in users can place order
   let newOrder = new OrdersModel({
     name: req.body.name,
     qty: req.body.qty,
     price: req.body.price,
     mode: req.body.mode,
   });
-
-  newOrder.save();
-
+  await newOrder.save();
   res.send("Order saved!");
 });
+
+
+// start server + DB
 
 app.listen(PORT, () => {
   console.log("App started!");

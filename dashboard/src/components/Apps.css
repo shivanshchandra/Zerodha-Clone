@@ -1,0 +1,71 @@
+.centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+    background-color: #f5f5f5;
+  }
+  
+  .stock-dashboard-content {
+    width: 90%;
+    max-width: 800px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-title {
+    text-align: center;
+    color: #387ed1;
+    margin-bottom: 30px;
+  }
+  
+  .search-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .search-input {
+    padding: 10px 15px;
+    border: 1px solid #e0e3eb;
+    border-radius: 4px;
+    width: 300px;
+    font-size: 14px;
+  }
+  
+  .search-button {
+    padding: 10px 20px;
+    background-color: #387ed1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .search-button:hover {
+    background-color: #2c65ad;
+  }
+  
+  .error-message {
+    color: #ff4d4f;
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .stock-info {
+    background-color: #f8fafd;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+  
+  .chart-container {
+    margin-top: 30px;
+    height: 400px;
+  }
+  
