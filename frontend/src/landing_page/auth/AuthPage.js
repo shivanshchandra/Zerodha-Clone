@@ -1,45 +1,56 @@
 import { useState } from "react";
 import Login from "../login/Login";
 import Signup from "../signup/Signup";
-
+import "./AuthPage.css";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
 
+  // ✅ store prefills after signup
+  const [prefill, setPrefill] = useState({ email: "", password: "" });
+
+  const goToDashboard = (token) => {
+    window.location.href = `http://localhost:3001/?token=${encodeURIComponent(token)}`;
+  };
+
+  const handleSignupSuccess = ({ email, password }) => {
+    setPrefill({ email, password });
+    setIsLogin(true); // ✅ switch to Sign in screen
+  };
+
   return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500">
-      <div className="bg-white p-10 rounded-2xl shadow-2xl w-[400px]">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          {isLogin ? "Login" : "Sign Up"}
-        </h2>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-title">{isLogin ? "Sign in" : "Create Account"}</h1>
 
-        {isLogin ? <Login /> : <Signup />}
+        {isLogin ? (
+          <Login
+            onDone={goToDashboard}
+            initialEmail={prefill.email}
+            initialPassword={prefill.password}
+          />
+        ) : (
+          <Signup onSignupSuccess={handleSignupSuccess} />
+        )}
 
-        <div className="text-center mt-6 text-gray-600">
+        <p className="auth-footer">
           {isLogin ? (
-            <p>
-              Don’t have an account?{" "}
-              <button
-                onClick={() => setIsLogin(false)}
-                className="text-purple-600 hover:underline"
-              >
-                Sign Up
+            <>
+              Don&apos;t have an account?{" "}
+              <button className="auth-link" onClick={() => setIsLogin(false)}>
+                Sign up
               </button>
-            </p>
+            </>
           ) : (
-            <p>
+            <>
               Already have an account?{" "}
-              <button
-                onClick={() => setIsLogin(true)}
-                className="text-purple-600 hover:underline"
-              >
-                Login
+              <button className="auth-link" onClick={() => setIsLogin(true)}>
+                Sign in
               </button>
-            </p>
+            </>
           )}
-        </div>
+        </p>
       </div>
     </div>
   );
 }
-

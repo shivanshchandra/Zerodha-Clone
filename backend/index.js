@@ -21,8 +21,34 @@ const uri = process.env.MONGO_URL;
 const app = express();
 
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://zerodha-frontend-ybnv.onrender.com",
+  "https://zerodha-dashboard-43bw.onrender.com",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like Postman)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("CORS not allowed: " + origin));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(bodyParser.json());
+
+const User = require("./model/UserModel");
+
+app.get("/debug/users", async (req, res) => {
+  const users = await User.find({}, { email: 1, name: 1 });
+  res.json(users);
+});
 
 
 app.use("/auth", authRoutes);
@@ -228,6 +254,12 @@ app.post("/newOrder", authMiddleware, async (req, res) => {
 
 app.listen(PORT, () => {
   console.log("App started!");
-  mongoose.connect(uri);
+  mongoose.connect(uri)
+  .then(() => {
+    console.log("Connected DB:", mongoose.connection.name);
+    console.log("Connected host:", mongoose.connection.host);
+    app.listen(PORT, () => console.log("Server running on", PORT));
+  })
+  .catch(err => console.error("DB connection error:", err));
   console.log("DB started!");
 });

@@ -1,51 +1,64 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../../api";
 
-export default function Login() {
-  const [form, setForm] = useState({ email: "", password: "" });
+export default function Login({ onDone, initialEmail = "", initialPassword = "" }) {
+  const [form, setForm] = useState({ email: initialEmail, password: initialPassword });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  // ✅ when AuthPage sends prefills after signup
+  useEffect(() => {
+    setForm({ email: initialEmail, password: initialPassword });
+  }, [initialEmail, initialPassword]);
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login form submitted:", form);
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await api.post("/auth/login", form);
+      const token = res?.data?.token;
+      if (!token) throw new Error("Token not received from login");
+
+      onDone?.(token);
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Sign in failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="auth-form">
+      <label className="auth-label">Email address</label>
       <input
         type="email"
         name="email"
-        placeholder="Email"
+        placeholder="Enter email"
         value={form.email}
         onChange={handleChange}
         required
-        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className="auth-input"
       />
 
+      <label className="auth-label">Password</label>
       <input
         type="password"
         name="password"
-        placeholder="Password"
+        placeholder="Enter password"
         value={form.password}
         onChange={handleChange}
         required
-        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className="auth-input"
       />
 
-      <div className="flex items-center space-x-2">
-        <input type="checkbox" id="remember" className="h-4 w-4" />
-        <label htmlFor="remember" className="text-sm text-gray-600">
-          Remember me
-        </label>
-      </div>
+      {error ? <p className="auth-error">{error}</p> : null}
 
-      <button
-        type="submit"
-        className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
-      >
-        LOGIN
+      <button type="submit" className="auth-btn" disabled={loading}>
+        {loading ? "Signing in..." : "Sign in"}
       </button>
     </form>
   );

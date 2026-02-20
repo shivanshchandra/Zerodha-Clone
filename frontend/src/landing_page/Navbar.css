@@ -1,0 +1,10 @@
+/* hover effect */
+.z-navlink:hover {
+  color: #3f7ae0 !important;
+}
+
+/* active route (NavLink automatically adds .active) */
+.z-navlink.active {
+  color: #3f7ae0 !important;
+  font-weight: 600;
+}

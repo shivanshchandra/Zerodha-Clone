@@ -1,54 +1,86 @@
 import { useState } from "react";
+import api from "../../api";
 
-export default function Signup() {
+export default function Signup({ onSignupSuccess }) {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup form submitted:", form);
+    setError("");
+
+    if (form.password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // ✅ signup only (do NOT redirect to dashboard)
+      await api.post("/auth/signup", form);
+
+      // ✅ Tell AuthPage to switch to Sign in + prefill values
+      onSignupSuccess?.({ email: form.email, password: form.password });
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Sign up failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="auth-form">
+      <label className="auth-label">Full name</label>
       <input
         type="text"
         name="name"
-        placeholder="Full Name"
+        placeholder="Enter name"
         value={form.name}
         onChange={handleChange}
         required
-        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className="auth-input"
       />
 
+      <label className="auth-label">Email address</label>
       <input
         type="email"
         name="email"
-        placeholder="Email"
+        placeholder="Enter email"
         value={form.email}
         onChange={handleChange}
         required
-        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className="auth-input"
       />
 
+      <label className="auth-label">Password</label>
       <input
         type="password"
         name="password"
-        placeholder="Password"
+        placeholder="Enter password"
         value={form.password}
         onChange={handleChange}
         required
-        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className="auth-input"
       />
 
-      <button
-        type="submit"
-        className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
-      >
-        SIGN UP
+      <label className="auth-label">Confirm password</label>
+      <input
+        type="password"
+        placeholder="Confirm password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        required
+        className="auth-input"
+      />
+
+      {error ? <p className="auth-error">{error}</p> : null}
+
+      <button type="submit" className="auth-btn" disabled={loading}>
+        {loading ? "Signing up..." : "Sign up"}
       </button>
     </form>
   );
