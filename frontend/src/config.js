@@ -1,6 +1,4 @@
 const API_BASE_URL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:3002"
-    : "https://zerodha-clone-vtke.onrender.com";
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:3002";
 
 export default API_BASE_URL;
