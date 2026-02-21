@@ -3,6 +3,11 @@ import Login from "../login/Login";
 import Signup from "../signup/Signup";
 import "./AuthPage.css";
 
+const DASHBOARD_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3001"
+    : "https://zerodha-dashboard-43bw.onrender.com";
+
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
 
@@ -10,7 +15,7 @@ export default function AuthPage() {
   const [prefill, setPrefill] = useState({ email: "", password: "" });
 
   const goToDashboard = (token) => {
-    window.location.href = `http://localhost:3001/?token=${encodeURIComponent(token)}`;
+    window.location.href = `${DASHBOARD_URL}/?token=${encodeURIComponent(token)}`;
   };
 
   const handleSignupSuccess = ({ email, password }) => {

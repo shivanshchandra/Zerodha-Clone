@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import api from "../api";
 import BuyActionWindow from "./BuyActionWindow";
 
+const FRONTEND_AUTH_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000/auth"
+    : "https://zerodha-frontend-ybnv.onrender.com/auth";
+
 const GeneralContext = React.createContext({
   user: null,
   logout: () => {},
@@ -21,7 +26,7 @@ export const GeneralContextProvider = (props) => {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const res = await api.get("/me"); // backend route
+        const res = await api.get("/me");
         setUser(res.data);
       } catch (err) {
         console.log("Failed to load user:", err?.response?.data || err.message);
@@ -51,7 +56,7 @@ export const GeneralContextProvider = (props) => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    window.location.href = "http://localhost:3000/auth"; // landing frontend auth page
+    window.location.href = FRONTEND_AUTH_URL;
   };
 
   return (
