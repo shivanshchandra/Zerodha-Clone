@@ -1,5 +1,4 @@
 import React, { useState, useContext } from "react";
-
 import axios from "axios";
 
 import GeneralContext from "./GeneralContext";
@@ -138,22 +137,28 @@ const WatchListActions = ({ uid }) => {
   };
 
   const handleSellClick = async () => {
-    try {
-      const res = await api.get("/allHoldings"); // needs auth token (your api.js adds it)
-      const holdings = res.data || [];
+  try {
+    const res = await api.get("/allHoldings");
+    const holdings = res.data || [];
 
-      const h = holdings.find((x) => x.name === uid);
+    const h = holdings.find((x) => x.name === uid);
 
-      if (!h || h.qty <= 0) {
-        alert("You don't own this stock, so you can't sell it.");
-        return;
-      }
-
-      generalContext.openSellWindow(uid);
-    } catch (err) {
-      alert("Could not check holdings. Please login again.");
+    if (!h || h.qty <= 0) {
+      generalContext.showPopup(
+        "Cannot Sell",
+        "You don't own this stock, so you can't sell it."
+      );
+      return;
     }
-  };
+
+    generalContext.openSellWindow(uid);
+  } catch (err) {
+    generalContext.showPopup(
+      "Error",
+      "Could not check holdings. Please login again."
+    );
+  }
+};
 
   return (
     <span className="actions">
