@@ -5,6 +5,7 @@ import axios from "axios";
 import GeneralContext from "./GeneralContext";
 
 import { Tooltip, Grow } from "@mui/material";
+import api from "../api";
 
 import {
   BarChartOutlined,
@@ -136,6 +137,24 @@ const WatchListActions = ({ uid }) => {
     generalContext.openBuyWindow(uid);
   };
 
+  const handleSellClick = async () => {
+    try {
+      const res = await api.get("/allHoldings"); // needs auth token (your api.js adds it)
+      const holdings = res.data || [];
+
+      const h = holdings.find((x) => x.name === uid);
+
+      if (!h || h.qty <= 0) {
+        alert("You don't own this stock, so you can't sell it.");
+        return;
+      }
+
+      generalContext.openSellWindow(uid);
+    } catch (err) {
+      alert("Could not check holdings. Please login again.");
+    }
+  };
+
   return (
     <span className="actions">
       <span>
@@ -148,24 +167,23 @@ const WatchListActions = ({ uid }) => {
         >
           <button className="buy">Buy</button>
         </Tooltip>
+
         <Tooltip
           title="Sell (S)"
           placement="top"
           arrow
           TransitionComponent={Grow}
+          onClick={handleSellClick}
         >
           <button className="sell">Sell</button>
         </Tooltip>
-        <Tooltip
-          title="Analytics (A)"
-          placement="top"
-          arrow
-          TransitionComponent={Grow}
-        >
+
+        <Tooltip title="Analytics (A)" placement="top" arrow TransitionComponent={Grow}>
           <button className="action">
             <BarChartOutlined className="icon" />
           </button>
         </Tooltip>
+
         <Tooltip title="More" placement="top" arrow TransitionComponent={Grow}>
           <button className="action">
             <MoreHoriz className="icon" />

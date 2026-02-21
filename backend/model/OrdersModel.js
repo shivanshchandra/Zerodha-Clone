@@ -1,7 +1,17 @@
-const { model } = require("mongoose");
+const mongoose = require("mongoose");
 
-const { OrdersSchema } = require("../schemas/OrdersSchema");
+const OrdersSchema = new mongoose.Schema(
+  {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    name: { type: String, required: true },
+    qty: { type: Number, required: true },
+    price: { type: Number, required: true },
+    mode: { type: String, enum: ["BUY", "SELL"], required: true },
+  },
+  { timestamps: true }
+);
 
-const OrdersModel = new model("order", OrdersSchema);
+// ✅ Prevent OverwriteModelError in dev/hot reload
+const OrdersModel = mongoose.models.Order || mongoose.model("Order", OrdersSchema);
 
 module.exports = { OrdersModel };

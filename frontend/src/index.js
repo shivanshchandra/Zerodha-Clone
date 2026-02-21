@@ -12,14 +12,14 @@ import SupportPage from "./landing_page/support/SupportPage";
 import NotFound from "./landing_page/NotFound";
 import Navbar from "./landing_page/Navbar";
 import Footer from "./landing_page/Footer";
-import Signup from "./landing_page/signup/Signup";
-import Login from "./landing_page/login/Login"
 import AuthPage from "./landing_page/auth/AuthPage"; // adjust path
+import ScrollToTop from "./landing_page/ScrollToTop";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
+  <ScrollToTop /> 
     <Navbar />
     <Routes>
       <Route path="/" element={<HomePage />} />

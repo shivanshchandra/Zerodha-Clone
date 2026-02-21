@@ -26,7 +26,7 @@ function Navbar() {
           <ul className="navbar-nav mb-lg-0 ms-auto">
             <li className="nav-item">
               <NavLink className="nav-link z-navlink" to="/auth">
-                Sign in / Sign up
+                Sign in
               </NavLink>
             </li>
 
