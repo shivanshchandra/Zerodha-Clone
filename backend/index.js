@@ -43,13 +43,6 @@ app.use(
 
 app.use(bodyParser.json());
 
-const User = require("./model/UserModel");
-
-app.get("/debug/users", async (req, res) => {
-  const users = await User.find({}, { email: 1, name: 1 });
-  res.json(users);
-});
-
 
 app.use("/auth", authRoutes);
 
